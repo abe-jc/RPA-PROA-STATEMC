@@ -1,4 +1,4 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="StateMachine" VisualBasic.Settings="{x:Null}" sap:VirtualizedContainerService.HintSize="748.6666666666666,678.6666666666666" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:av="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="StateMachine" VisualBasic.Settings="{x:Null}" sap:VirtualizedContainerService.HintSize="854,678.6666666666666" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:av="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
       <x:String>System.Activities</x:String>
@@ -26,6 +26,7 @@
       <x:String>GlobalVariablesNamespace</x:String>
       <x:String>GlobalConstantsNamespace</x:String>
       <x:String>System.Reflection</x:String>
+      <x:String>System.Runtime.Serialization</x:String>
     </sco:Collection>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
@@ -64,6 +65,11 @@
       <AssemblyReference>System.ComponentModel</AssemblyReference>
       <AssemblyReference>System.Memory</AssemblyReference>
       <AssemblyReference>System.Private.Uri</AssemblyReference>
+      <AssemblyReference>System.Private.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization.Formatters</AssemblyReference>
+      <AssemblyReference>System.Private.DataContractSerialization</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization.Primitives</AssemblyReference>
+      <AssemblyReference>System.Collections</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <StateMachine InitialState="{x:Reference __ReferenceID4}" DisplayName="StateMachine" sap:VirtualizedContainerService.HintSize="614,614" sap2010:WorkflowViewState.IdRef="StateMachine_1">
@@ -78,11 +84,16 @@
     </sap:WorkflowViewStateService.ViewState>
     <State x:Name="__ReferenceID4" sap2010:Annotation.AnnotationText="Set awal mesin AC" DisplayName="Initial State" sap:VirtualizedContainerService.HintSize="134,108" sap2010:WorkflowViewState.IdRef="State_1">
       <State.Entry>
-        <ui:InputDialog Options="{x:Null}" DisplayName="Input Dialog" sap:VirtualizedContainerService.HintSize="334,300.6666666666667" sap2010:WorkflowViewState.IdRef="InputDialog_1" IsPassword="False" Label="Mau menyalakan AC?" OptionsString="YES;NO" Title="Mesin AC">
-          <ui:InputDialog.Result>
-            <OutArgument x:TypeArguments="x:String">[NyalakanAC]</OutArgument>
-          </ui:InputDialog.Result>
-        </ui:InputDialog>
+        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="InitWorkflow.xaml - Invoke Workflow File" sap:VirtualizedContainerService.HintSize="334,115.33333333333333" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Framework\InitWorkflow.xaml">
+          <ui:InvokeWorkflowFile.Arguments>
+            <OutArgument x:TypeArguments="x:String" x:Key="NyalakanAC">
+              <VisualBasicReference x:TypeArguments="x:String" ExpressionText="NyalakanAC" />
+            </OutArgument>
+            <InOutArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="config">
+              <VisualBasicReference x:TypeArguments="scg:Dictionary(x:String, x:String)" ExpressionText="ConfigAC" />
+            </InOutArgument>
+          </ui:InvokeWorkflowFile.Arguments>
+        </ui:InvokeWorkflowFile>
       </State.Entry>
       <sap:WorkflowViewStateService.ViewState>
         <scg:Dictionary x:TypeArguments="x:String, x:Object">
@@ -113,8 +124,8 @@
                       <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                     </scg:Dictionary>
                   </sap:WorkflowViewStateService.ViewState>
-                  <WriteLine DisplayName="Write Line" sap:VirtualizedContainerService.HintSize="334,92" sap2010:WorkflowViewState.IdRef="WriteLine_1" Text="[&quot;Suhu : &quot; +  SuhuAC.ToString]" />
-                  <ui:InputDialog Options="{x:Null}" DisplayName="Input Dialog" sap:VirtualizedContainerService.HintSize="334,300.6666666666667" sap2010:WorkflowViewState.IdRef="InputDialog_2" IsPassword="False" Label="Pilih menu HEAT /  COLD / OFF" OptionsString="HEAT;COLD;OFF" Title="[&quot;Suhu AC &quot; + SuhuAC.ToString]">
+                  <WriteLine DisplayName="Write Line" sap:VirtualizedContainerService.HintSize="334,92" sap2010:WorkflowViewState.IdRef="WriteLine_1" Text="[&quot;AC Merek:&quot; + ConfigAC(&quot;Merek&quot;) + &quot;Suhu : &quot; +  SuhuAC.ToString]" />
+                  <ui:InputDialog Options="{x:Null}" DisplayName="Input Dialog" sap:VirtualizedContainerService.HintSize="334,300.6666666666667" sap2010:WorkflowViewState.IdRef="InputDialog_2" IsPassword="False" Label="Pilih menu HEAT /  COLD / OFF" OptionsString="HEAT;COLD;OFF" Title="[ConfigAC(&quot;Model&quot;)+ &quot; - Suhu AC &quot; + SuhuAC.ToString]">
                     <ui:InputDialog.Result>
                       <OutArgument x:TypeArguments="x:String">[PilihMenu]</OutArgument>
                     </ui:InputDialog.Result>
@@ -144,14 +155,42 @@
                   <Transition.To>
                     <State x:Name="__ReferenceID2" DisplayName="HEAT State" sap:VirtualizedContainerService.HintSize="134,62.666666666666664" sap2010:WorkflowViewState.IdRef="State_4">
                       <State.Entry>
-                        <Assign sap:VirtualizedContainerService.HintSize="434,85.33333333333333" sap2010:WorkflowViewState.IdRef="Assign_2">
-                          <Assign.To>
-                            <OutArgument x:TypeArguments="x:Int32">[SuhuAC]</OutArgument>
-                          </Assign.To>
-                          <Assign.Value>
-                            <InArgument x:TypeArguments="x:Int32">[SuhuAC + 1]</InArgument>
-                          </Assign.Value>
-                        </Assign>
+                        <Sequence sap:VirtualizedContainerService.HintSize="552,618" sap2010:WorkflowViewState.IdRef="Sequence_4">
+                          <sap:WorkflowViewStateService.ViewState>
+                            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                            </scg:Dictionary>
+                          </sap:WorkflowViewStateService.ViewState>
+                          <If Condition="[SuhuAC &lt; CInt(ConfigAC(&quot;Max&quot;))]" sap:VirtualizedContainerService.HintSize="510,530.6666666666666" sap2010:WorkflowViewState.IdRef="If_1">
+                            <If.Then>
+                              <Sequence sap:VirtualizedContainerService.HintSize="476,172.66666666666666" sap2010:WorkflowViewState.IdRef="Sequence_2">
+                                <sap:WorkflowViewStateService.ViewState>
+                                  <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                                    <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                                  </scg:Dictionary>
+                                </sap:WorkflowViewStateService.ViewState>
+                                <Assign sap:VirtualizedContainerService.HintSize="434,85.33333333333333" sap2010:WorkflowViewState.IdRef="Assign_2">
+                                  <Assign.To>
+                                    <OutArgument x:TypeArguments="x:Int32">[SuhuAC]</OutArgument>
+                                  </Assign.To>
+                                  <Assign.Value>
+                                    <InArgument x:TypeArguments="x:Int32">[SuhuAC + 1]</InArgument>
+                                  </Assign.Value>
+                                </Assign>
+                              </Sequence>
+                            </If.Then>
+                            <If.Else>
+                              <Sequence sap:VirtualizedContainerService.HintSize="376,174" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                                <sap:WorkflowViewStateService.ViewState>
+                                  <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                                    <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                                  </scg:Dictionary>
+                                </sap:WorkflowViewStateService.ViewState>
+                                <ui:MessageBox Caption="{x:Null}" ChosenButton="{x:Null}" AutoCloseAfter="00:00:00" DisplayName="Message Box" sap:VirtualizedContainerService.HintSize="334,86.66666666666667" sap2010:WorkflowViewState.IdRef="MessageBox_3" Text="[&quot;Suhu Max : &quot; + ConfigAC(&quot;Max&quot;)]" />
+                              </Sequence>
+                            </If.Else>
+                          </If>
+                        </Sequence>
                       </State.Entry>
                       <sap:WorkflowViewStateService.ViewState>
                         <scg:Dictionary x:TypeArguments="x:String, x:Object">
@@ -180,13 +219,48 @@
                 <Transition DisplayName="COLD" sap:VirtualizedContainerService.HintSize="539.3333333333334,522.6666666666666" sap2010:WorkflowViewState.IdRef="Transition_6">
                   <sap:WorkflowViewStateService.ViewState>
                     <scg:Dictionary x:TypeArguments="x:String, x:Object">
-                      <av:PointCollection x:Key="ConnectorLocation">337,371.33333333333337 533.4,371.33333333333337 533.4,458.6666666666667</av:PointCollection>
+                      <av:PointCollection x:Key="ConnectorLocation">337,371.33333333333337 390,371.33333333333337 390,406.70666666666665 533.4,406.70666666666665 533.4,458.6666666666667</av:PointCollection>
                       <x:Int32 x:Key="SrcConnectionPointIndex">24</x:Int32>
                       <x:Int32 x:Key="DestConnectionPointIndex">46</x:Int32>
+                      <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                     </scg:Dictionary>
                   </sap:WorkflowViewStateService.ViewState>
+                  <Transition.Condition>
+                    <VisualBasicValue x:TypeArguments="x:Boolean" ExpressionText="PilihMenu.Equals(&quot;COLD&quot;)" />
+                  </Transition.Condition>
                   <Transition.To>
                     <State x:Name="__ReferenceID3" DisplayName="CLOD State" sap:VirtualizedContainerService.HintSize="134,62.666666666666664" sap2010:WorkflowViewState.IdRef="State_5">
+                      <State.Entry>
+                        <If Condition="[SuhuAC &gt; Cint(ConfigAC(&quot;Min&quot;))]" sap:VirtualizedContainerService.HintSize="510,530.6666666666666" sap2010:WorkflowViewState.IdRef="If_2">
+                          <If.Then>
+                            <Sequence sap:VirtualizedContainerService.HintSize="476,172.66666666666666" sap2010:WorkflowViewState.IdRef="Sequence_5">
+                              <sap:WorkflowViewStateService.ViewState>
+                                <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                                  <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                                </scg:Dictionary>
+                              </sap:WorkflowViewStateService.ViewState>
+                              <Assign sap:VirtualizedContainerService.HintSize="434,85.33333333333333" sap2010:WorkflowViewState.IdRef="Assign_3">
+                                <Assign.To>
+                                  <OutArgument x:TypeArguments="x:Int32">[SuhuAC]</OutArgument>
+                                </Assign.To>
+                                <Assign.Value>
+                                  <InArgument x:TypeArguments="x:Int32">[SuhuAC - 1]</InArgument>
+                                </Assign.Value>
+                              </Assign>
+                            </Sequence>
+                          </If.Then>
+                          <If.Else>
+                            <Sequence sap:VirtualizedContainerService.HintSize="376,174" sap2010:WorkflowViewState.IdRef="Sequence_6">
+                              <sap:WorkflowViewStateService.ViewState>
+                                <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                                  <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                                </scg:Dictionary>
+                              </sap:WorkflowViewStateService.ViewState>
+                              <ui:MessageBox Caption="{x:Null}" ChosenButton="{x:Null}" AutoCloseAfter="00:00:00" DisplayName="Message Box" sap:VirtualizedContainerService.HintSize="334,86.66666666666667" sap2010:WorkflowViewState.IdRef="MessageBox_4" Text="[&quot;Suhu Minimum: &quot; + ConfigAC(&quot;Min&quot;)]" />
+                            </Sequence>
+                          </If.Else>
+                        </If>
+                      </State.Entry>
                       <sap:WorkflowViewStateService.ViewState>
                         <scg:Dictionary x:TypeArguments="x:String, x:Object">
                           <av:Point x:Key="ShapeLocation">453,458.6666666666667</av:Point>
@@ -210,24 +284,11 @@
                       </State.Transitions>
                     </State>
                   </Transition.To>
-                  <Transition.Action>
-                    <Assign sap:VirtualizedContainerService.HintSize="434,85.33333333333333" sap2010:WorkflowViewState.IdRef="Assign_1">
-                      <Assign.To>
-                        <OutArgument x:TypeArguments="x:Int32">[SuhuAC]</OutArgument>
-                      </Assign.To>
-                      <Assign.Value>
-                        <InArgument x:TypeArguments="x:Int32">[SuhuAC - 1]</InArgument>
-                      </Assign.Value>
-                    </Assign>
-                  </Transition.Action>
-                  <Transition.Condition>
-                    <VisualBasicValue x:TypeArguments="x:Boolean" ExpressionText="PilihMenu.Equals(&quot;COLD&quot;)" />
-                  </Transition.Condition>
                 </Transition>
-                <Transition DisplayName="OFF" sap:VirtualizedContainerService.HintSize="451.3333333333333,553.3333333333334" sap2010:WorkflowViewState.IdRef="Transition_7">
+                <Transition DisplayName="OFF" sap:VirtualizedContainerService.HintSize="451.3333333333333,824" sap2010:WorkflowViewState.IdRef="Transition_7">
                   <sap:WorkflowViewStateService.ViewState>
                     <scg:Dictionary x:TypeArguments="x:String, x:Object">
-                      <av:PointCollection x:Key="ConnectorLocation">337,371.33333333333337 386,371.33333333333337 386,336.70666666666665 520,336.70666666666665 520,301.33333333333337</av:PointCollection>
+                      <av:PointCollection x:Key="ConnectorLocation">337,371.33333333333337 520,371.33333333333337 520,301.33333333333337</av:PointCollection>
                       <x:Int32 x:Key="SrcConnectionPointIndex">24</x:Int32>
                       <x:Int32 x:Key="DestConnectionPointIndex">39</x:Int32>
                     </scg:Dictionary>
@@ -283,6 +344,7 @@
         </Variable.Default>
       </Variable>
       <Variable x:TypeArguments="x:String" Name="PilihMenu" />
+      <Variable x:TypeArguments="scg:Dictionary(x:String, x:String)" Default="[new Dictionary(Of String, String)]" Name="ConfigAC" />
     </StateMachine.Variables>
   </StateMachine>
 </Activity>
